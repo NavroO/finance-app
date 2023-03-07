@@ -10,3 +10,43 @@ datasource db {
   url      = env("DATABASE_URL")
   relationMode = "prisma"
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  finance   Finance[]
+}
+
+model Finance {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  user      User     @relation(fields: [userId], references: [id])
+  financeItem FinanceItem[]
+  userId    Int
+  balance   Int
+  income    Int
+  expense   Int
+
+  @@index([userId])
+}
+
+model FinanceItem {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  financeId Int
+  name      String
+  amount    Int
+  type      String
+  finance   Finance  @relation(fields: [financeId], references: [id])
+
+  @@index([financeId])
+}
